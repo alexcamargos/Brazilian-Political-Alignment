@@ -11,6 +11,18 @@ identificando padrões e mudanças no alinhamento político brasileiro. Para iss
 conceitos do Diagrama de Nolan, que oferece uma visão bidimensional do espectro político,
 considerando tanto a liberdade econômica quanto as liberdades pessoais.
 
+- [Alinhamento Político Brasileiro (Direita, Esquerda ou Centro): Análise dos Prefeitos Eleitos de 1992 a 2024](#alinhamento-político-brasileiro-direita-esquerda-ou-centro-análise-dos-prefeitos-eleitos-de-1992-a-2024)
+  - [Objetivo do Projeto](#objetivo-do-projeto)
+  - [Os Espectros Políticos Segundo o Diagrama de Nolan](#os-espectros-políticos-segundo-o-diagrama-de-nolan)
+    - [Partidos de Esquerda](#partidos-de-esquerda)
+    - [Partidos de Centro](#partidos-de-centro)
+    - [Partidos de Direita](#partidos-de-direita)
+  - [Importante](#importante)
+  - [Autor](#autor)
+  - [Copyright](#copyright)
+  - [License](#license)
+
+
 ## Objetivo do Projeto
 
 O objetivo deste projeto é analisar e mapear historicamente o alinhamento político dos candidatos
@@ -63,6 +75,17 @@ pessoais, alguns partidos de direita podem adotar posturas mais conservadoras, d
 tradicionais e possivelmente apoiando restrições em temas como aborto, casamento entre pessoas do
 mesmo sexo e uso de drogas. No Diagrama de Nolan, esses partidos situam-se no quadrante que combina
 maior liberdade econômica com menor liberdade pessoal.
+
+## Importante
+
+Este projeto tem como objetivo principal a análise do alinhamento político dos prefeitos eleitos no
+Brasil de 1992 a 2024, utilizando o Diagrama de Nolan para classificar as orientações políticas.
+**Ressaltamos que o trabalho e as análises de dados aqui praticadas têm exclusivamente um cunho
+educacional, focando no aprendizado de técnicas de coleta, organização, processamento e análise de
+informações. Não há qualquer intenção de fazer apologia, seja ela negativa ou positiva, a qualquer
+partido ou candidato**. Além disso, o autor declara expressamente que não possui qualquer vínculo
+com partidos políticos ou candidatos, assegurando a imparcialidade e a objetividade das análises
+realizadas.
 
 ## Autor
 
