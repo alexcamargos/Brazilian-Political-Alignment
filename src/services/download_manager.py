@@ -46,14 +46,16 @@ class DownloadManager(DownloadManagerInterface):
 
     def run(self, output_dir: str = 'downloads'):
 
+        election_years = generate_election_years(self.__start_year, self.__end_year)
+
         with ThreadPoolExecutor(max_workers=self.__max_threads) as executor:
-            futures = {}
-            for year in generate_election_years(self.__start_year, self.__end_year):
-                election_year_instance = self.__election_year(year)
-                url = election_year_instance.generate_url()
-                file_path = path.join(output_dir, election_year_instance.file_name())
-                future = executor.submit(self.__file_downloader.download_file, url, file_path)
-                futures[future] = year
+            futures = {
+                executor.submit(
+                    self.__file_downloader.download_file,
+                    self.__election_year(year).generate_url(),
+                    path.join(output_dir, self.__election_year(year).file_name())
+                ): year for year in election_years
+            }
 
             for future in as_completed(futures):
                 try:
