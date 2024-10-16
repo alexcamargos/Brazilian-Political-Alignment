@@ -23,7 +23,7 @@ import os
 def make_directory(path: str, exist_ok: bool = True) -> None:
     """Create a directory if it does not exist."""
 
-    os.makedirs(path, exist_ok)
+    os.makedirs(path, exist_ok=exist_ok)
 
 
 def generate_election_years(start_year: int, end_year: int, interval: int = 4) -> list:
