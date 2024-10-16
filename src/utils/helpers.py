@@ -30,4 +30,12 @@ def make_directory(path: str):
 def generate_election_years(start_year: int, end_year: int, interval: int = 4) -> list:
     """Generate a list of election years."""
 
-    return list(range(start_year, end_year + 1, interval))
+    known_municipal_election = 2024
+
+    offset = (start_year - known_municipal_election) % interval
+    first_municipal_election_year = start_year - offset
+
+    if first_municipal_election_year < start_year:
+        first_municipal_election_year += interval
+
+    return list(range(first_municipal_election_year, end_year + 1, interval))
