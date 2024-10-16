@@ -26,6 +26,13 @@ def make_directory(path: str, exist_ok: bool = True) -> None:
     os.makedirs(path, exist_ok=exist_ok)
 
 
+def delete_file(file_path: str) -> None:
+    """Delete a file."""
+
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        os.remove(file_path)
+
+
 def generate_election_years(start_year: int, end_year: int, interval: int = 4) -> list:
     """Generate a list of election years."""
 
@@ -38,3 +45,14 @@ def generate_election_years(start_year: int, end_year: int, interval: int = 4) -
         first_municipal_election_year += interval
 
     return list(range(first_municipal_election_year, end_year + 1, interval))
+
+
+def extract_year_from_zip_file_name(file_name: str) -> str:
+    """Extract the year from a zip file name."""
+
+    base_name = os.path.basename(file_name)
+    name_parts = base_name.split('_')
+    year = name_parts[-1]
+
+    return year.replace('.zip', '')
+he
