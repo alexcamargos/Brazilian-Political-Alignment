@@ -23,14 +23,13 @@ from src.services.file_downloader import FileDownloader
 from src.utils.helpers import make_directory
 
 if __name__ == '__main__':
-    START_YEAR = 2020
+    START_YEAR = 2015
     END_YEAR = 2024
     OUTPUT_DIR = 'downloads'
 
-    election_year = ElectionYear()
     downloader = FileDownloader()
 
     make_directory(OUTPUT_DIR)
 
-    manager = DownloadManager(election_year, downloader, START_YEAR, END_YEAR)
+    manager = DownloadManager(ElectionYear, downloader, START_YEAR, END_YEAR)
     manager.run(OUTPUT_DIR)
