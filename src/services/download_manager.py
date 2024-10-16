@@ -35,7 +35,7 @@ class DownloadManager(DownloadManagerInterface):
                  max_threads=5):
 
         if start_year > end_year:
-            raise ValueError("start_year must be less than or equal to end_year")
+            raise ValueError('start_year must be less than or equal to end_year')
 
         self.__election_year = election_year
         self.__file_downloader = file_downloader
@@ -62,4 +62,4 @@ class DownloadManager(DownloadManagerInterface):
                     future.result()
                 except Exception as error:
                     year = futures[future]
-                    print(f"An unexpected error occurred {year}: {error}")
+                    print(f'An unexpected error occurred {year}: {error}')

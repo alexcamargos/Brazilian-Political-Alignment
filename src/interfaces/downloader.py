@@ -23,5 +23,5 @@ from abc import ABC, abstractmethod
 class FileDownloaderInterface(ABC):
 
     @abstractmethod
-    def download_file(self, url: str, path: str):
+    def download_file(self, url: str, file_path: str):
         raise NotImplementedError('Method "download_file" must be implemented.')

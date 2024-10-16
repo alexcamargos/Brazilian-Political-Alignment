@@ -17,6 +17,8 @@
 # ------------------------------------------------------------------------------
 # pylint: disable=missing-module-docstring, missing-function-docstring, missing-class-docstring
 
+from os import path
+
 import requests
 
 from src.interfaces.downloader import FileDownloaderInterface
@@ -24,12 +26,22 @@ from src.interfaces.downloader import FileDownloaderInterface
 
 class FileDownloader(FileDownloaderInterface):
 
-    def download_file(self, url: str, path: str):
+    def download_file(self, url: str, file_path: str):
+        """Download a file from a URL and save it to a local file path."""
+
         try:
             response = requests.get(url, timeout=10, stream=True)
             response.raise_for_status()
 
-            with open(path, 'wb') as file:
+            if path.exists(file_path):
+                file_size_local = path.getsize(file_path)
+                file_size_remote = int(response.headers.get('content-length', 0))
+
+                if file_size_remote == file_size_local:
+                    print(f'{file_path} already exists and has the same size as the remote file.')
+                    return
+
+            with open(file_path, 'wb') as file:
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
                         file.write(chunk)

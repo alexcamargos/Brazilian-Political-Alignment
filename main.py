@@ -23,7 +23,7 @@ from src.services.file_downloader import FileDownloader
 from src.utils.helpers import make_directory
 
 if __name__ == '__main__':
-    START_YEAR = 2015
+    START_YEAR = 1990
     END_YEAR = 2024
     OUTPUT_DIR = 'downloads'
 
