@@ -15,11 +15,12 @@
 #
 #  License: MIT
 # ------------------------------------------------------------------------------
+# pylint: disable=missing-module-docstring, missing-function-docstring, missing-class-docstring
 
 from os import path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from src.interfaces.handler import DownloadManagerInterface
+from src.interfaces.downloader import DownloadManagerInterface
 from src.models.election_year import ElectionYear
 from src.services.file_downloader import FileDownloader
 from src.utils.helpers import generate_election_years

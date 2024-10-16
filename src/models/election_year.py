@@ -17,7 +17,7 @@
 # ------------------------------------------------------------------------------
 # pylint: disable=missing-module-docstring, missing-function-docstring, missing-class-docstring
 
-from src.interfaces.election_year import ElectionYearInterface
+from src.models.election_year_interface import ElectionYearInterface
 
 
 class ElectionYear(ElectionYearInterface):

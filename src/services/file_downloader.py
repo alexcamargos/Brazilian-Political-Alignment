@@ -21,7 +21,7 @@ from os import path
 
 import requests
 
-from src.interfaces.downloader import FileDownloaderInterface
+from src.interfaces.file_handler import FileDownloaderInterface
 
 
 class FileDownloader(FileDownloaderInterface):

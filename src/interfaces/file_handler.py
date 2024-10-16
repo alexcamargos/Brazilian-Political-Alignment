@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 # ------------------------------------------------------------------------------
-#  Name: election_year.py
+#  Name: file_handler.py
 #  Version: 0.0.1
 #
 #  Summary: Alinhamento Político Brasileiro
@@ -20,14 +20,8 @@
 from abc import ABC, abstractmethod
 
 
-class ElectionYearInterface(ABC):
-
-    BASE_URL = 'https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/'
+class FileDownloaderInterface(ABC):
 
     @abstractmethod
-    def generate_url(self):
-        raise NotImplementedError('Method "generate_url" must be implemented.')
-
-    @abstractmethod
-    def file_name(self):
-        raise NotImplementedError('Method "file_name" must be implemented.')
+    def download_file(self, url: str, file_path: str):
+        raise NotImplementedError('Method "download_file" must be implemented.')

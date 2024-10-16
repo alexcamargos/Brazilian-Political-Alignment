@@ -20,8 +20,9 @@
 from abc import ABC, abstractmethod
 
 
-class FileDownloaderInterface(ABC):
+class DownloadManagerInterface(ABC):
 
     @abstractmethod
-    def download_file(self, url: str, file_path: str):
-        raise NotImplementedError('Method "download_file" must be implemented.')
+    def run(self, output_dir: str = 'downloads'):
+
+        raise NotImplementedError('Method "run" must be implemented.')
