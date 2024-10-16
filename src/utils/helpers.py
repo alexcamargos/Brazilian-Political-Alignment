@@ -55,4 +55,3 @@ def extract_year_from_zip_file_name(file_name: str) -> str:
     year = name_parts[-1]
 
     return year.replace('.zip', '')
-he
