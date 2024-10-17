@@ -18,6 +18,19 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
 
 import os
+from csv import Dialect
+
+
+class TSECVSDialect(Dialect):
+    """CSV dialect for TSE CVS files."""
+
+    delimiter = ";"
+    doublequote = True
+    escapechar = None
+    lineterminator = "\n"
+    quotechar = '"'
+    quoting = 0
+    skipinitialspace = False
 
 
 def make_directory(path: str, exist_ok: bool = True) -> None:
