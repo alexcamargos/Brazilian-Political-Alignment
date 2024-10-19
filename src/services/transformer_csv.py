@@ -20,6 +20,7 @@
 import csv
 import glob
 import os
+from typing import Iterator, List
 
 from src.interfaces.transformer import CVSTransformerInterface
 from src.utils.helpers import TSECVSDialect
@@ -44,7 +45,7 @@ class CVSTransformer(CVSTransformerInterface):
 
         return glob.glob(f'{self.__source_directory}/*.cvs')
 
-    def __read_csv_rows(self, file_path: str, file_encoding: str = 'latin-1') -> list:
+    def __read_csv_rows(self, file_path: str, file_encoding: str = 'latin-1') -> Iterator[List[str]]:
         """Read a CSV file and return its content."""
 
         try:
