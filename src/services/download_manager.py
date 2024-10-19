@@ -17,8 +17,10 @@
 # ------------------------------------------------------------------------------
 # pylint: disable=missing-module-docstring, missing-function-docstring, missing-class-docstring
 
-from os import path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from os import path
+
+from tqdm import tqdm
 
 from src.interfaces.downloader import DownloadManagerInterface
 from src.models.election_year import ElectionYear
@@ -58,7 +60,7 @@ class DownloadManager(DownloadManagerInterface):
                 ): year for year in election_years
             }
 
-            for future in as_completed(futures):
+            for future in tqdm(as_completed(futures), total=len(futures), desc='Downloading files'):
                 try:
                     future.result()
                 except Exception as error:

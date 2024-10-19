@@ -21,12 +21,12 @@ import glob
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from zipfile import BadZipFile, ZipFile
 
+from tqdm import tqdm
+
 from src.interfaces.extractor import ExtractionManagerInterface
-from src.utils.helpers import (
-    delete_file,
-    extract_year_from_zip_file_name,
-    make_directory,
-)
+from src.utils.helpers import (delete_file,
+                               extract_year_from_zip_file_name,
+                               make_directory)
 
 
 class ExtractionManager(ExtractionManagerInterface):
@@ -74,7 +74,7 @@ class ExtractionManager(ExtractionManagerInterface):
                 ): zip_file for zip_file in zip_files
             }
 
-            for future in as_completed(futures):
+            for future in tqdm(as_completed(futures), total=len(futures), desc='Extracting files'):
                 year = futures[future]
                 future.result()
                 print(f'Extraction of {year} completed successfully.')
