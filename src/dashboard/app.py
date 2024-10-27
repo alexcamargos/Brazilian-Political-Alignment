@@ -21,57 +21,56 @@ import plotly.express as px
 import streamlit as st
 
 
-def filter_position(data: pd.DataFrame, position: str) -> pd.DataFrame:
-    """Filter the dataset by a specific position.
+class MunicipalElection():
+    """Class to represent a municipal election."""
 
-    Parameters:
-        - data: DataFrame with election data.
-        - position: Position to filter the dataset.
+    def __init__(self, data: pd.DataFrame, position: str = 'Prefeito') -> None:
+        self.__data = data
+        self.__position = position
 
-    Returns:
-        - DataFrame with only the selected position.
-    """
+        # Filter the dataset by elected position.
+        self.__filter_data = self.__filter_elected_position()
 
-    return data[data['DS_CARGO'] == position]
+    def __filter_position(self) -> pd.DataFrame:
+        """Filter the dataset by a specific position.
 
+        Returns:
+            - DataFrame with only the selected position.
+        """
 
-def filter_position_by_situation(data: pd.DataFrame,
-                                 position: str,
-                                 situation: str) -> pd.DataFrame:
-    """Filter only elected mayors from the dataset.
+        return self.__data[self.__data['DS_CARGO'] == self.__position]
 
-    Parameters:
-        - data: DataFrame with election data.
-        - position: Position to filter the dataset.
-        - situation: Situation to filter the dataset.
+    def __filter_elected_position(self) -> pd.DataFrame:
+        """Filter only elected mayors from the dataset.
 
-    Returns:
-        - DataFrame with only elected mayors.
-    """
+        Returns:
+            - DataFrame with only elected mayors.
+        """
 
-    elected_position_df = data[data[position] == situation]
+        position_df = self.__filter_position()
+        elected_position_df = position_df[position_df['DS_SIT_TOT_TURNO'] == 'ELEITO']
+        drop_elected_position_df = elected_position_df.drop_duplicates(subset=['SQ_CANDIDATO'])
 
-    # Drop duplicates to keep only one row per candidate.
-    elected_position_df = elected_position_df.drop_duplicates(subset=['SQ_CANDIDATO'])
+        return drop_elected_position_df
 
-    return elected_position_df
+    @property
+    def filter_data(self) -> pd.DataFrame:
+        """Return the filtered dataset."""
 
+        return self.__filter_data
 
-def count_mayors_by_party(data: pd.DataFrame) -> pd.DataFrame:
-    """Count the number of mayors elected by party.
+    def count_by_party(self) -> pd.DataFrame:
+        """Count the number of mayors elected by party.
 
-    Parameters:
-        - data: DataFrame with election data.
+        Returns:
+            - DataFrame with the number of mayors elected by party.
+        """
 
-    Returns:
-        - DataFrame with the number of mayors elected by party.
-    """
+        party_counts = self.__filter_data['SG_PARTIDO'].value_counts().reset_index()
+        party_counts.columns = ['Partido', 'Quantidade']
+        party_counts = party_counts.sort_values(by='Quantidade', ascending=False)
 
-    party_counts = data['SG_PARTIDO'].value_counts().reset_index()
-    party_counts.columns = ['Partido', 'Quantidade']
-    party_counts = party_counts.sort_values(by='Quantidade', ascending=False)
-
-    return party_counts
+        return party_counts
 
 
 @st.cache_resource
@@ -153,23 +152,19 @@ def main_page() -> None:
     datafame = load_election_data(DATA_FILE_PATH)
 
     if not datafame.empty:
-        mayors_df = filter_position(datafame, 'Prefeito')
-        elected_mayors_df = filter_position_by_situation(mayors_df,
-                                                         'DS_SIT_TOT_TURNO',
-                                                         'ELEITO')
-        party_counts_df = count_mayors_by_party(elected_mayors_df)
 
-        # Display the project content.
-        st.subheader('Prefeitos eleitos em 2024')
-        chart = create_bar_chart_party_counts(party_counts_df)
+        # Create a MunicipalElection object for the mayoral election.
+        mayoral_election = MunicipalElection(datafame)
+        mayoral_party_counts_df = mayoral_election.count_by_party()
 
+        chart = create_bar_chart_party_counts(mayoral_party_counts_df)
         st.plotly_chart(chart)
 
         st.write('---')
         st.subheader('Dados utilizados')
         st.write(
             'Abaixo, você pode conferir os dados utilizados para a análise dos prefeitos eleitos em 2024.')
-        st.write(elected_mayors_df)
+        st.write(mayoral_election.filter_data)
     else:
         st.write('Os dados não foram carregados. Contate o administrador do sistema.')
 
