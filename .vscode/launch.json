@@ -1,0 +1,53 @@
+{
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Initialize Command",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "args": "--initialize",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Download Command",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "args": "--download",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Extract Command",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "args": "--extract",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Merge Command",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "args": "--merge",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "All Commands",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "args": "--all",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
