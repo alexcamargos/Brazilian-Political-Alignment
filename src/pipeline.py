@@ -94,7 +94,8 @@ class Pipeline:
             if command not in self.__commands:
                 raise ValueError(f'Command "{command}" is not valid. Available commands: {list(self.__commands.keys())}')
 
-        for index, command in enumerate(commands_to_run):
+        # Running the commands.
+        for command in commands_to_run:
 
             try:
                 print(f'Running command: {command}')
