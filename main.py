@@ -29,7 +29,7 @@ if __name__ == '__main__':
     END_YEAR = 2024
     DOWNLOADS_DIR = 'downloads'
     EXTRACTION_DIR = 'extractions'
-    TRANSFORMER_DIR = f'{EXTRACTION_DIR}/2024'
+    TRANSFORMER_DIR = EXTRACTION_DIR
     OUTPUT_FILE = 'merge_votacao_candidato_munzona_{}.csv'
 
     pipeline = Pipeline(START_YEAR,

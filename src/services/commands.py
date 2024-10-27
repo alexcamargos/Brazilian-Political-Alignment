@@ -15,6 +15,8 @@
 # ------------------------------------------------------------------------------
 # pylint: disable=missing-module-docstring, missing-function-docstring, missing-class-docstring
 
+from typing import List
+
 from src.interfaces.controller import CommandInterface
 from src.services.download_manager import DownloadManager
 from src.services.extractor_manager import ExtractionManager
@@ -71,10 +73,11 @@ class ExtractDataCommand(CommandInterface):
 class MergeDataCommand(CommandInterface):
     """Merge the extracted data."""
 
-    def __init__(self, transformer: CVSTransformer):
-        self.transformer = transformer
+    def __init__(self, transformers: List[CVSTransformer]):
+        self.transformers = transformers
 
     def execute(self) -> None:
         """Execute the command."""
 
-        self.transformer.merge_csv_files()
+        for transformer in self.transformers:
+            transformer.transform()

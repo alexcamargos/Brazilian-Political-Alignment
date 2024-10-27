@@ -90,7 +90,7 @@ class CVSTransformer(CVSTransformerInterface):
         except IOError as io_error:
             print(f'Input/Output Error: {io_error}')
 
-    def merge_csv_files(self) -> None:
+    def __merge_csv_files(self) -> None:
         """Merge all CSV files in the source directory into a single file."""
 
         if not os.path.exists(self.__source_directory) and not os.path.isdir(self.__source_directory):
@@ -103,3 +103,8 @@ class CVSTransformer(CVSTransformerInterface):
         for csv_file in csv_files:
             csv_data = self.__read_csv_rows(csv_file, 'latin-1')
             self.__write_csv_rows(csv_data)
+
+    def transform(self) -> None:
+        """Transform the data in the CSV files."""
+
+        self.__merge_csv_files()

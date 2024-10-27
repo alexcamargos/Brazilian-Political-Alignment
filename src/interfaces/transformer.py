@@ -24,7 +24,7 @@ class CVSTransformerInterface(ABC):
     """Transform a CSV file with TSE data."""
 
     @abstractmethod
-    def merge_csv_files(self) -> None:
+    def transform(self) -> None:
         """Merge all CSV files in the source directory into a single file."""
 
-        raise NotImplementedError("Method 'merge_csv_files' must be implemented.")
+        raise NotImplementedError("Method 'transform' must be implemented.")

@@ -28,6 +28,7 @@ from src.services.download_manager import DownloadManager
 from src.services.extractor_manager import ExtractionManager
 from src.services.file_downloader import FileDownloader
 from src.services.transformer_csv import CVSTransformer
+from src.utils.helpers import generate_election_years
 
 
 class Pipeline:
@@ -56,9 +57,8 @@ class Pipeline:
                                                   self.__end_year)
         self.__extractor = ExtractionManager()
 
-        self.__transformer = CVSTransformer(self.__transformer_dir,
-                                            self.__transformer_dir,
-                                            self.__output_file)
+        # Creating the transformer for each year in the pipeline.
+        self.__transformer = self.__create_transformers()
 
         # Defining all available commands.
         self.__commands = {
@@ -72,6 +72,29 @@ class Pipeline:
                                           self.__extraction_dir),
             'merge': MergeDataCommand(self.__transformer)
         }
+
+    def __create_transformers(self) -> List[CVSTransformer]:
+        """Create a list of transformers for each year in the pipeline.
+
+        Returns:
+            List[CVSTransformer]: List of transformers.
+        """
+
+        transformers = []
+
+        for year in generate_election_years(self.__start_year, self.__end_year):
+            # Input directory containing the csv files.
+            input_dir = f'{self.__extraction_dir}/{year}'
+            # Output directory for the transformed files.
+            output_dir = input_dir
+            # Output file name.
+            output_file = self.__output_file.format(year)
+            # Creating the transformer.
+            transformers.append(CVSTransformer(input_dir,
+                                               output_dir,
+                                               output_file))
+
+        return transformers
 
     def run(self, commands_to_run: List[str] = None) -> None:
         """Executes one of the steps in the data pipeline.
