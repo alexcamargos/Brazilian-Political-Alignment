@@ -33,7 +33,7 @@ class CVSTransformer(CVSTransformerInterface):
         self.__source_directory = source_directory
         self.__output_dir = output_dir
         self.__output_file = output_file
-        self.__output_file_path = f'{self.__output_dir}/{self.__output_file}'
+        self.__output_file_path = f'{self.__output_dir}/{self.__output_file.format(output_dir.split('/')[-1])}'
 
     def __get_csv_files(self,
                         extension: str = '*[0-9][0-9][0-9][0-9]_[A-Z][A-Z].csv',
@@ -45,7 +45,9 @@ class CVSTransformer(CVSTransformerInterface):
 
         return glob.glob(f'{self.__source_directory}/*.cvs')
 
-    def __read_csv_rows(self, file_path: str, file_encoding: str = 'latin-1') -> Iterator[List[str]]:
+    def __read_csv_rows(self,
+                        file_path: str,
+                        file_encoding: str = 'latin-1') -> Iterator[List[str]]:
         """Read a CSV file and return its content."""
 
         try:
@@ -59,8 +61,17 @@ class CVSTransformer(CVSTransformerInterface):
         except IOError as io_error:
             print(f'Input/Output Error: {io_error}')
 
-    def __write_csv__rows(self, data: list,  file_encoding: str = 'latin-1') -> None:
+    def __skip_csv_header(self, data: Iterator[List[str]]) -> Iterator[List[str]]:
+        """Skip the header of a CSV file."""
+
+        return (row for index, row in enumerate(data) if index > 0)
+
+    def __write_csv_rows(self, data: Iterator[List[str]],  file_encoding: str = 'latin-1') -> None:
         """Write data to a CSV file."""
+
+        # Checking if the target file already exists and has no content.
+        output_file_exists = os.path.exists(self.__output_file_path)
+        output_file_not_empty = output_file_exists and os.path.getsize(self.__output_file_path) > 0
 
         try:
             with open(self.__output_file_path,
@@ -68,6 +79,10 @@ class CVSTransformer(CVSTransformerInterface):
                       encoding=file_encoding,
                       newline='') as file_object:
                 csv_writer = csv.writer(file_object, dialect=TSECVSDialect)
+
+                if output_file_not_empty:
+                    data = self.__skip_csv_header(data)
+
                 csv_writer.writerows(data)
 
         except csv.Error as csv_error:
@@ -85,10 +100,6 @@ class CVSTransformer(CVSTransformerInterface):
         if not csv_files:
             raise FileNotFoundError(f'No CSV files found in {self.__source_directory}.')
 
-        for index, csv_file in enumerate(csv_files):
+        for csv_file in csv_files:
             csv_data = self.__read_csv_rows(csv_file, 'latin-1')
-
-            if index > 0:
-                continue
-
-            self.__write_csv__rows(csv_data)
+            self.__write_csv_rows(csv_data)
