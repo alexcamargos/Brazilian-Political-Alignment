@@ -23,11 +23,13 @@ from src.models.election_year import ElectionYear
 from src.services.commands import (DownloadCommand,
                                    ExtractDataCommand,
                                    InitializeCommand,
-                                   MergeDataCommand)
+                                   MergeDataCommand,
+                                   FileAggregateCommand)
 from src.services.download_manager import DownloadManager
 from src.services.extractor_manager import ExtractionManager
 from src.services.file_downloader import FileDownloader
 from src.services.transformer_csv import CVSTransformer
+from src.services.file_aggregator import FileAggregator
 from src.utils.helpers import generate_election_years
 
 
@@ -40,6 +42,7 @@ class Pipeline:
                  downloads_dir: str,
                  extraction_dir: str,
                  transformer_dir: str,
+                 aggregation_dir: str,
                  output_file: str) -> None:
 
         self.__start_year = start_year
@@ -47,6 +50,7 @@ class Pipeline:
         self.__downloads_dir = downloads_dir
         self.__extraction_dir = extraction_dir
         self.__transformer_dir = transformer_dir
+        self.__aggregation_dir = aggregation_dir
         self.__output_file = output_file
 
         self.__file_downloader = FileDownloader()
@@ -57,6 +61,9 @@ class Pipeline:
                                                   self.__end_year)
         self.__extractor = ExtractionManager()
 
+        self.__aggregator = FileAggregator(self.__transformer_dir,
+                                           self.__aggregation_dir)
+
         # Creating the transformer for each year in the pipeline.
         self.__transformer = self.__create_transformers()
 
@@ -64,13 +71,15 @@ class Pipeline:
         self.__commands = {
             'initialize': InitializeCommand([self.__downloads_dir,
                                              self.__extraction_dir,
-                                             self.__transformer_dir]),
+                                             self.__transformer_dir,
+                                             self.__aggregation_dir]),
             'download': DownloadCommand(self.__download_manager,
                                         self.__downloads_dir),
             'extract': ExtractDataCommand(self.__extractor,
                                           self.__downloads_dir,
                                           self.__extraction_dir),
-            'merge': MergeDataCommand(self.__transformer)
+            'merge': MergeDataCommand(self.__transformer),
+            'aggregate': FileAggregateCommand(self.__aggregator)
         }
 
     def __create_transformers(self) -> List[CVSTransformer]:

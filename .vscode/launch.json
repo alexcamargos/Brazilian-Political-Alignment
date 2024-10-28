@@ -41,6 +41,15 @@
             "justMyCode": true
         },
         {
+            "name": "Aggregate Command",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "args": "--aggregate",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "All Commands",
             "type": "debugpy",
             "request": "launch",

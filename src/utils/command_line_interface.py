@@ -59,6 +59,12 @@ def get_arguments() -> argparse.Namespace:
                         help='Run the merge step.'
                         )
 
+    parser.add_argument('-g',
+                        '--aggregate',
+                        action='store_true',
+                        help='Run the aggregation step.'
+                        )
+
     parser.add_argument('-a',
                         '--all',
                         action='store_true',

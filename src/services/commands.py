@@ -21,6 +21,7 @@ from src.interfaces.controller import CommandInterface
 from src.services.download_manager import DownloadManager
 from src.services.extractor_manager import ExtractionManager
 from src.services.transformer_csv import CVSTransformer
+from src.services.file_aggregator import FileAggregator
 from src.utils.helpers import make_directory
 
 
@@ -81,3 +82,15 @@ class MergeDataCommand(CommandInterface):
 
         for transformer in self.transformers:
             transformer.transform()
+
+
+class FileAggregateCommand(CommandInterface):
+    """Aggregate the data."""
+
+    def __init__(self, aggregator: FileAggregator):
+        self.__aggregator = aggregator
+
+    def execute(self) -> None:
+        """Execute the command."""
+
+        self.__aggregator.aggregate_files()

@@ -30,6 +30,7 @@ if __name__ == '__main__':
     DOWNLOADS_DIR = 'downloads'
     EXTRACTION_DIR = 'extractions'
     TRANSFORMER_DIR = EXTRACTION_DIR
+    AGGREGATED_DIR = 'aggregated'
     OUTPUT_FILE = 'merge_votacao_candidato_munzona_{}.csv'
 
     pipeline = Pipeline(START_YEAR,
@@ -37,10 +38,11 @@ if __name__ == '__main__':
                         DOWNLOADS_DIR,
                         EXTRACTION_DIR,
                         TRANSFORMER_DIR,
+                        AGGREGATED_DIR,
                         OUTPUT_FILE)
 
     # All available commands.
-    available_commands = ['initialize', 'download', 'extract', 'merge']
+    available_commands = ['initialize', 'download', 'extract', 'merge', 'aggregate']
     # Get the commands to run.
     commands_to_run = [command for command in available_commands if getattr(args, command)]
 
