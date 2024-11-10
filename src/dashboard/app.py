@@ -18,6 +18,7 @@
 
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import streamlit as st
 
 
@@ -72,13 +73,32 @@ class MunicipalElection():
 
         return party_counts
 
+    def top5_states_by_party(self) -> dict:
+        """Get the top 5 states with the highest number of mayors elected per party.
+
+        Returns:
+            - Dictionary where keys are party codes and values are DataFrames with top 5 states and their counts.
+        """
+
+        parties = self.__filter_data['SG_PARTIDO'].unique()
+
+        top5_dict = {}
+        for party in parties:
+            party_data = self.__filter_data[self.__filter_data['SG_PARTIDO'] == party]
+            state_counts = party_data['SG_UF'].value_counts().nlargest(5).reset_index()
+            state_counts.columns = ['Estado', 'Quantidade']
+            top5_dict[party] = state_counts
+
+        return top5_dict
+
 
 @st.cache_resource
-def create_bar_chart_party_counts(party_counts: pd.DataFrame) -> px.bar:
+def create_bar_chart_party_counts(party_counts: pd.DataFrame, year: str) -> go.Figure:
     """Create a bar chart with the number of mayors elected by party.
 
     Parameters:
         - party_counts: DataFrame with the number of mayors elected by party.
+        - year: Year of the election.
 
     Returns:
         - Bar chart with the number of mayors elected by party.
@@ -87,7 +107,7 @@ def create_bar_chart_party_counts(party_counts: pd.DataFrame) -> px.bar:
     fig = px.bar(party_counts,
                  x='Partido',
                  y='Quantidade',
-                 title='Quantidade de Prefeitos Eleitos por Partido',
+                 title=f'Quantidade de Prefeitos Eleitos por Partido - {year}',
                  labels={'Partido': 'Partido',
                          'Quantidade': 'Número de Prefeitos Eleitos'},
                  color='Partido',
@@ -140,7 +160,9 @@ def dasboard_footer() -> None:
 
 def main_page() -> None:
 
-    DATA_FILE_PATH = 'extractions/2024/merge_votacao_candidato_munzona_2024.csv'
+    DATA_FILE_PATH_2024 = 'aggregated/merge_votacao_candidato_munzona_2024.csv'
+    DATA_FILE_PATH_2020 = 'aggregated/merge_votacao_candidato_munzona_2020.csv'
+    DATA_FILE_PATH_2016 = 'aggregated/merge_votacao_candidato_munzona_2016.csv'
 
     # Set the page configuration.
     set_page_config()
@@ -149,22 +171,50 @@ def main_page() -> None:
     dashboard_banner()
 
     # Load and filter the election data.
-    datafame = load_election_data(DATA_FILE_PATH)
+    datafame_2024 = load_election_data(DATA_FILE_PATH_2024)
+    datafame_2020 = load_election_data(DATA_FILE_PATH_2020)
+    datafame_2016 = load_election_data(DATA_FILE_PATH_2016)
 
-    if not datafame.empty:
+    if not datafame_2024.empty or not datafame_2020.empty or not datafame_2016.empty:
 
-        # Create a MunicipalElection object for the mayoral election.
-        mayoral_election = MunicipalElection(datafame)
-        mayoral_party_counts_df = mayoral_election.count_by_party()
+        tab_2024, tab_2020, tab_2016 = st.tabs(['2024', '2020', '2016'])
 
-        chart = create_bar_chart_party_counts(mayoral_party_counts_df)
-        st.plotly_chart(chart)
+        with tab_2024:
+            # Create a MunicipalElection object for the mayoral election.
+            mayoral_election_2024 = MunicipalElection(datafame_2024)
+            mayoral_party_counts_2024_df = mayoral_election_2024.count_by_party()
+            chart_2024 = create_bar_chart_party_counts(mayoral_party_counts_2024_df, '2024')
+            st.plotly_chart(chart_2024)
 
-        st.write('---')
-        st.subheader('Dados utilizados')
-        st.write(
-            'Abaixo, você pode conferir os dados utilizados para a análise dos prefeitos eleitos em 2024.')
-        st.write(mayoral_election.filter_data)
+            st.write('---')
+            st.subheader('Dados utilizados')
+            st.write(
+                'Abaixo, você pode conferir os dados utilizados para a análise dos prefeitos eleitos em 2024.')
+            st.write(mayoral_election_2024.filter_data)
+
+        with tab_2020:
+            mayoral_election_2020 = MunicipalElection(datafame_2020)
+            mayoral_party_counts_2020_df = mayoral_election_2020.count_by_party()
+            chart_2020 = create_bar_chart_party_counts(mayoral_party_counts_2020_df, '2020')
+            st.plotly_chart(chart_2020)
+
+            st.write('---')
+            st.subheader('Dados utilizados')
+            st.write(
+                'Abaixo, você pode conferir os dados utilizados para a análise dos prefeitos eleitos em 2020.')
+            st.write(mayoral_election_2020.filter_data)
+
+        with tab_2016:
+            mayoral_election_2016 = MunicipalElection(datafame_2016)
+            mayoral_party_counts_2016_df = mayoral_election_2016.count_by_party()
+            chart_2016 = create_bar_chart_party_counts(mayoral_party_counts_2016_df, '2016')
+            st.plotly_chart(chart_2016)
+
+            st.write('---')
+            st.subheader('Dados utilizados')
+            st.write(
+                'Abaixo, você pode conferir os dados utilizados para a análise dos prefeitos eleitos em 2016.')
+            st.write(mayoral_election_2016.filter_data)
     else:
         st.write('Os dados não foram carregados. Contate o administrador do sistema.')
 

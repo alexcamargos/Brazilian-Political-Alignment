@@ -65,6 +65,12 @@ def get_arguments() -> argparse.Namespace:
                         help='Run the aggregation step.'
                         )
 
+    parser.add_argument('-p',
+                        '--process',
+                        action='store_true',
+                        help='Run the processing step.'
+                        )
+
     parser.add_argument('-a',
                         '--all',
                         action='store_true',

@@ -20,8 +20,9 @@ from typing import List
 from src.interfaces.controller import CommandInterface
 from src.services.download_manager import DownloadManager
 from src.services.extractor_manager import ExtractionManager
-from src.services.transformer_csv import CVSTransformer
 from src.services.file_aggregator import FileAggregator
+from src.services.file_processor import FileProcessor
+from src.services.transformer_csv import CVSTransformer
 from src.utils.helpers import make_directory
 
 
@@ -32,7 +33,7 @@ class InitializeCommand(CommandInterface):
         self.__output_dir = output_dir
 
     def execute(self) -> None:
-        """Execute the command."""
+        """Execute the initialize command."""
 
         for directory in self.__output_dir:
             make_directory(directory)
@@ -49,7 +50,7 @@ class DownloadCommand(CommandInterface):
         self.__output_dir = output_dir
 
     def execute(self) -> None:
-        """Execute the command."""
+        """Execute the download command."""
 
         self.__download_manager.run(self.__output_dir)
 
@@ -66,7 +67,7 @@ class ExtractDataCommand(CommandInterface):
         self.__extraction_dir = extraction_dir
 
     def execute(self) -> None:
-        """Execute the command."""
+        """Execute the extract data command."""
 
         self.__extractor.extract_all_files(self.__output_dir, self.__extraction_dir)
 
@@ -78,7 +79,7 @@ class MergeDataCommand(CommandInterface):
         self.transformers = transformers
 
     def execute(self) -> None:
-        """Execute the command."""
+        """Execute the merge data command."""
 
         for transformer in self.transformers:
             transformer.transform()
@@ -91,6 +92,19 @@ class FileAggregateCommand(CommandInterface):
         self.__aggregator = aggregator
 
     def execute(self) -> None:
-        """Execute the command."""
+        """Execute the file aggregation command."""
 
         self.__aggregator.aggregate_files()
+
+
+class FileProcessorCommand(CommandInterface):
+    """Process the data."""
+
+    def __init__(self, file_processor: FileProcessor, aggregation_dir: str):
+        self.__file_processor = file_processor
+        self.__aggregation_dir = aggregation_dir
+
+    def execute(self) -> None:
+        """Execute the file processor command."""
+
+        self.__file_processor.process_file(self.__aggregation_dir)

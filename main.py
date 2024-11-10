@@ -42,7 +42,7 @@ if __name__ == '__main__':
                         OUTPUT_FILE)
 
     # All available commands.
-    available_commands = ['initialize', 'download', 'extract', 'merge', 'aggregate']
+    available_commands = ['initialize', 'download', 'extract', 'merge', 'aggregate', 'process']
     # Get the commands to run.
     commands_to_run = [command for command in available_commands if getattr(args, command)]
 

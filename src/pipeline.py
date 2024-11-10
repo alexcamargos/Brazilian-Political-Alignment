@@ -22,14 +22,16 @@ from typing import List
 from src.models.election_year import ElectionYear
 from src.services.commands import (DownloadCommand,
                                    ExtractDataCommand,
+                                   FileAggregateCommand,
+                                   FileProcessorCommand,
                                    InitializeCommand,
-                                   MergeDataCommand,
-                                   FileAggregateCommand)
+                                   MergeDataCommand)
 from src.services.download_manager import DownloadManager
 from src.services.extractor_manager import ExtractionManager
-from src.services.file_downloader import FileDownloader
-from src.services.transformer_csv import CVSTransformer
 from src.services.file_aggregator import FileAggregator
+from src.services.file_downloader import FileDownloader
+from src.services.file_processor import FileProcessor
+from src.services.transformer_csv import CVSTransformer
 from src.utils.helpers import generate_election_years
 
 
@@ -45,6 +47,7 @@ class Pipeline:
                  aggregation_dir: str,
                  output_file: str) -> None:
 
+        # Defining the pipeline parameters.
         self.__start_year = start_year
         self.__end_year = end_year
         self.__downloads_dir = downloads_dir
@@ -53,16 +56,24 @@ class Pipeline:
         self.__aggregation_dir = aggregation_dir
         self.__output_file = output_file
 
+        # Creating the file downloader.
         self.__file_downloader = FileDownloader()
 
+        # Creating the download manager.
         self.__download_manager = DownloadManager(ElectionYear,
                                                   self.__file_downloader,
                                                   self.__start_year,
                                                   self.__end_year)
+
+        # Creating the extractor manager.
         self.__extractor = ExtractionManager()
 
+        # Creating the file aggregator.
         self.__aggregator = FileAggregator(self.__transformer_dir,
                                            self.__aggregation_dir)
+
+        # Creating the file processor.
+        self.__file_processor = FileProcessor()
 
         # Creating the transformer for each year in the pipeline.
         self.__transformer = self.__create_transformers()
@@ -79,7 +90,9 @@ class Pipeline:
                                           self.__downloads_dir,
                                           self.__extraction_dir),
             'merge': MergeDataCommand(self.__transformer),
-            'aggregate': FileAggregateCommand(self.__aggregator)
+            'aggregate': FileAggregateCommand(self.__aggregator),
+            'process': FileProcessorCommand(self.__file_processor,
+                                            self.__aggregation_dir)
         }
 
     def __create_transformers(self) -> List[CVSTransformer]:
@@ -124,7 +137,8 @@ class Pipeline:
         # Validating the commands.
         for command in commands_to_run:
             if command not in self.__commands:
-                raise ValueError(f'Command "{command}" is not valid. Available commands: {list(self.__commands.keys())}')
+                raise ValueError(f'Command "{command}" is not valid. Available commands: {
+                                 list(self.__commands.keys())}')
 
         # Running the commands.
         for command in commands_to_run:
