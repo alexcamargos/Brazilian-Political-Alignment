@@ -124,9 +124,16 @@ def create_bar_chart_party_counts(party_counts: pd.DataFrame, year: str) -> go.F
 
 @st.cache_data
 def load_election_data(file_path: str) -> pd.DataFrame:
-    return pd.read_csv(file_path,
-                       encoding='latin1',
-                       sep=';', decimal=',')
+    """Load the election data from a parquet file.
+
+    Arguments:
+        - file_path: Path to the parquet file.
+
+    Returns:
+        - DataFrame with the election data.
+    """
+
+    return pd.read_parquet(file_path)
 
 
 def set_page_config() -> None:
@@ -160,9 +167,9 @@ def dasboard_footer() -> None:
 
 def main_page() -> None:
 
-    DATA_FILE_PATH_2024 = 'aggregated/merge_votacao_candidato_munzona_2024.csv'
-    DATA_FILE_PATH_2020 = 'aggregated/merge_votacao_candidato_munzona_2020.csv'
-    DATA_FILE_PATH_2016 = 'aggregated/merge_votacao_candidato_munzona_2016.csv'
+    DATA_FILE_PATH_2024 = 'data/merge_votacao_candidato_munzona_2024.parquet'
+    DATA_FILE_PATH_2020 = 'data/merge_votacao_candidato_munzona_2020.parquet'
+    DATA_FILE_PATH_2016 = 'data/merge_votacao_candidato_munzona_2016.parquet'
 
     # Set the page configuration.
     set_page_config()
