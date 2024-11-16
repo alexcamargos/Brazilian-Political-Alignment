@@ -27,10 +27,10 @@ if __name__ == '__main__':
         [
             st.Page(main_page,
                     title='Página Inicial',
-                    icon=':material/Home:',),
+                    icon=':material/home:',),
             st.Page(comparison_political_alignment_page,
                     title='Comparação de Alinhamento Político',
-                    icon=':material/Map:'),
+                    icon=':material/map:'),
         ]
     )
 
