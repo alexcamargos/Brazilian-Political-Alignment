@@ -16,80 +16,14 @@
 #  License: MIT
 # ------------------------------------------------------------------------------
 
+import glob
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-
-class MunicipalElection():
-    """Class to represent a municipal election."""
-
-    def __init__(self, data: pd.DataFrame, position: str = 'Prefeito') -> None:
-        self.__data = data
-        self.__position = position
-
-        # Filter the dataset by elected position.
-        self.__filter_data = self.__filter_elected_position()
-
-    def __filter_position(self) -> pd.DataFrame:
-        """Filter the dataset by a specific position.
-
-        Returns:
-            - DataFrame with only the selected position.
-        """
-
-        return self.__data[self.__data['DS_CARGO'] == self.__position]
-
-    def __filter_elected_position(self) -> pd.DataFrame:
-        """Filter only elected mayors from the dataset.
-
-        Returns:
-            - DataFrame with only elected mayors.
-        """
-
-        position_df = self.__filter_position()
-        elected_position_df = position_df[position_df['DS_SIT_TOT_TURNO'] == 'ELEITO']
-        drop_elected_position_df = elected_position_df.drop_duplicates(subset=['SQ_CANDIDATO'])
-
-        return drop_elected_position_df
-
-    @property
-    def filter_data(self) -> pd.DataFrame:
-        """Return the filtered dataset."""
-
-        return self.__filter_data
-
-    def count_by_party(self) -> pd.DataFrame:
-        """Count the number of mayors elected by party.
-
-        Returns:
-            - DataFrame with the number of mayors elected by party.
-        """
-
-        party_counts = self.__filter_data['SG_PARTIDO'].value_counts().reset_index()
-        party_counts.columns = ['Partido', 'Quantidade']
-        party_counts = party_counts.sort_values(by='Quantidade', ascending=False)
-
-        return party_counts
-
-    def top5_states_by_party(self) -> dict:
-        """Get the top 5 states with the highest number of mayors elected per party.
-
-        Returns:
-            - Dictionary where keys are party codes and values are DataFrames with top 5 states and their counts.
-        """
-
-        parties = self.__filter_data['SG_PARTIDO'].unique()
-
-        top5_dict = {}
-        for party in parties:
-            party_data = self.__filter_data[self.__filter_data['SG_PARTIDO'] == party]
-            state_counts = party_data['SG_UF'].value_counts().nlargest(5).reset_index()
-            state_counts.columns = ['Estado', 'Quantidade']
-            top5_dict[party] = state_counts
-
-        return top5_dict
+from src.dashboard.models.elections import Election
 
 
 @st.cache_resource
@@ -136,23 +70,27 @@ def load_election_data(file_path: str) -> pd.DataFrame:
     return pd.read_parquet(file_path)
 
 
-def set_page_config() -> None:
+def setup_dashboard_configuration() -> None:
     st.set_page_config(page_title='Alinhamento Político Brasileiro',
                        page_icon=':chart_with_upwards_trend:',
                        layout='wide',
                        initial_sidebar_state='auto')
 
 
+@st.cache_resource
 def dashboard_banner() -> None:
-    st.title('Alinhamento Político Brasileiro (Direita, Esquerda ou Centro): Análise dos Prefeitos Eleitos de 1992 a 2024')
-    st.write('Este projeto de análise de dados tem como objetivo comparar, desde 1992 até as eleições de 2024, o',
-             'espectro político dos candidatos a prefeito eleitos em cada município do Brasil. Através desta',
+    st.title(
+        'Alinhamento Político Brasileiro (Direita, Esquerda ou Centro): Análise dos Prefeitos Eleitos de 1992 a 2024'
+        )
+    st.write('Este projeto de análise de dados tem como objetivo comparar, desde 1992 até as eleições de 2024,'
+             'o espectro político dos candidatos a prefeito eleitos em cada município do Brasil. Através desta',
              'análise histórica, busca-se compreender as tendências políticas municipais ao longo dos anos,',
              'identificando padrões e mudanças no alinhamento político brasileiro. Para isso, serão utilizados os',
              'conceitos do Diagrama de Nolan, que oferece uma visão bidimensional do espectro político,',
              'considerando tanto a liberdade econômica quanto as liberdades pessoais.')
 
 
+@st.cache_resource
 def dasboard_footer() -> None:
     st.markdown(
         """
@@ -165,65 +103,63 @@ def dasboard_footer() -> None:
     )
 
 
+@st.cache_data
+def list_all_elections_files(data_directory: str,
+                             file_extension: str = 'parquet') -> list[glob.glob]:
+    """List all election data files from a directory.
+
+    Arguments:
+        - data_directory: Path to the directory with the election data files.
+        - file_extension: Extension of the election data files.
+
+    Returns:
+        - List with the available election data files.
+    """
+
+    # Find all file matching the pattern in the data directory.
+    file_pattern = f'{data_directory}/*.{file_extension}'
+
+    # Return the list of files in reverse order.
+    return glob.glob(file_pattern)[::-1]
+
+
 def main_page() -> None:
-
-    DATA_FILE_PATH_2024 = 'data/merge_votacao_candidato_munzona_2024.parquet'
-    DATA_FILE_PATH_2020 = 'data/merge_votacao_candidato_munzona_2020.parquet'
-    DATA_FILE_PATH_2016 = 'data/merge_votacao_candidato_munzona_2016.parquet'
-
+    """Default page of the dashboard."""
+    
     # Set the page configuration.
-    set_page_config()
+    setup_dashboard_configuration()
 
-    # Display the project banner.
+    # Display the page banner.
     dashboard_banner()
 
-    # Load and filter the election data.
-    datafame_2024 = load_election_data(DATA_FILE_PATH_2024)
-    datafame_2020 = load_election_data(DATA_FILE_PATH_2020)
-    datafame_2016 = load_election_data(DATA_FILE_PATH_2016)
+    # Display the header of the analysis.
+    st.subheader('Análise dos Prefeitos Eleitos por Partido Político')
 
-    if not datafame_2024.empty or not datafame_2020.empty or not datafame_2016.empty:
+    # List all election data files.
+    data_directory = 'data'
+    parquet_data_files = list_all_elections_files(data_directory)
 
-        tab_2024, tab_2020, tab_2016 = st.tabs(['2024', '2020', '2016'])
+    # Load the election data from the parquet files.
+    all_elections_data = [load_election_data(file) for file in parquet_data_files]
 
-        with tab_2024:
-            # Create a MunicipalElection object for the mayoral election.
-            mayoral_election_2024 = MunicipalElection(datafame_2024)
-            mayoral_party_counts_2024_df = mayoral_election_2024.count_by_party()
-            chart_2024 = create_bar_chart_party_counts(mayoral_party_counts_2024_df, '2024')
-            st.plotly_chart(chart_2024)
+    # Create containers separated into tabs for each election year.
+    election_years = [year.split('.')[0].split('_')[-1] for year in parquet_data_files]
+    tabs = st.tabs(election_years)
 
-            st.write('---')
-            st.subheader('Dados utilizados')
-            st.write(
-                'Abaixo, você pode conferir os dados utilizados para a análise dos prefeitos eleitos em 2024.')
-            st.write(mayoral_election_2024.filter_data)
-
-        with tab_2020:
-            mayoral_election_2020 = MunicipalElection(datafame_2020)
-            mayoral_party_counts_2020_df = mayoral_election_2020.count_by_party()
-            chart_2020 = create_bar_chart_party_counts(mayoral_party_counts_2020_df, '2020')
-            st.plotly_chart(chart_2020)
-
-            st.write('---')
-            st.subheader('Dados utilizados')
-            st.write(
-                'Abaixo, você pode conferir os dados utilizados para a análise dos prefeitos eleitos em 2020.')
-            st.write(mayoral_election_2020.filter_data)
-
-        with tab_2016:
-            mayoral_election_2016 = MunicipalElection(datafame_2016)
-            mayoral_party_counts_2016_df = mayoral_election_2016.count_by_party()
-            chart_2016 = create_bar_chart_party_counts(mayoral_party_counts_2016_df, '2016')
-            st.plotly_chart(chart_2016)
-
-            st.write('---')
-            st.subheader('Dados utilizados')
-            st.write(
-                'Abaixo, você pode conferir os dados utilizados para a análise dos prefeitos eleitos em 2016.')
-            st.write(mayoral_election_2016.filter_data)
-    else:
-        st.write('Os dados não foram carregados. Contate o administrador do sistema.')
-
+    # Display the graphs of elected mayors by party for each election.
+    for index, election_data in enumerate(all_elections_data):
+        with tabs[index]:
+            if election_data.empty:
+                st.write('Os dados não foram carregados. Contate o administrador do sistema.')
+                continue
+            else:
+                # Create an Election object for the mayoral election.
+                election = Election(election_data, position='Prefeito')
+                party_counts = election.count_by_party()
+                chart = create_bar_chart_party_counts(party_counts, election_years[index])
+                
+                # Display the bar chart with the number of mayors elected by party.
+                st.plotly_chart(chart)
+    
     # Display the project footer.
     dasboard_footer()
