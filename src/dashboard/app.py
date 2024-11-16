@@ -16,14 +16,14 @@
 #  License: MIT
 # ------------------------------------------------------------------------------
 
-import glob
-
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
 from src.dashboard.models.elections import Election
+from src.dashboard.utils.data_support import list_all_elections_files, load_election_data
+from src.dashboard.utils.standard_elements import dasboard_footer, dashboard_banner
 
 
 @st.cache_resource
@@ -56,71 +56,11 @@ def create_bar_chart_party_counts(party_counts: pd.DataFrame, year: str) -> go.F
     return fig
 
 
-@st.cache_data
-def load_election_data(file_path: str) -> pd.DataFrame:
-    """Load the election data from a parquet file.
-
-    Arguments:
-        - file_path: Path to the parquet file.
-
-    Returns:
-        - DataFrame with the election data.
-    """
-
-    return pd.read_parquet(file_path)
-
-
 def setup_dashboard_configuration() -> None:
     st.set_page_config(page_title='Alinhamento Político Brasileiro',
                        page_icon=':chart_with_upwards_trend:',
                        layout='wide',
                        initial_sidebar_state='auto')
-
-
-@st.cache_resource
-def dashboard_banner() -> None:
-    st.title(
-        'Alinhamento Político Brasileiro (Direita, Esquerda ou Centro): Análise dos Prefeitos Eleitos de 1992 a 2024'
-        )
-    st.write('Este projeto de análise de dados tem como objetivo comparar, desde 1992 até as eleições de 2024,'
-             'o espectro político dos candidatos a prefeito eleitos em cada município do Brasil. Através desta',
-             'análise histórica, busca-se compreender as tendências políticas municipais ao longo dos anos,',
-             'identificando padrões e mudanças no alinhamento político brasileiro. Para isso, serão utilizados os',
-             'conceitos do Diagrama de Nolan, que oferece uma visão bidimensional do espectro político,',
-             'considerando tanto a liberdade econômica quanto as liberdades pessoais.')
-
-
-@st.cache_resource
-def dasboard_footer() -> None:
-    st.markdown(
-        """
-        <div style="text-align: center;">
-            <p>Copyright © 2024 - Alexsander Lopes Camargos</p>
-            <p>Feito com Streamlit, Plotly e Pandas.</p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-@st.cache_data
-def list_all_elections_files(data_directory: str,
-                             file_extension: str = 'parquet') -> list[glob.glob]:
-    """List all election data files from a directory.
-
-    Arguments:
-        - data_directory: Path to the directory with the election data files.
-        - file_extension: Extension of the election data files.
-
-    Returns:
-        - List with the available election data files.
-    """
-
-    # Find all file matching the pattern in the data directory.
-    file_pattern = f'{data_directory}/*.{file_extension}'
-
-    # Return the list of files in reverse order.
-    return glob.glob(file_pattern)[::-1]
 
 
 def main_page() -> None:
