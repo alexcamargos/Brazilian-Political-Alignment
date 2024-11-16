@@ -16,8 +16,23 @@
 #  License: MIT
 # ------------------------------------------------------------------------------
 
+import streamlit as st
+
 from src.dashboard.app import main_page
+from src.dashboard.pages.maps import comparison_political_alignment_page
 
+if __name__ == '__main__':
+    # Create paginated navigation bar.
+    pages = st.navigation(
+        [
+            st.Page(main_page,
+                    title='Página Inicial',
+                    icon=':material/Home:',),
+            st.Page(comparison_political_alignment_page,
+                    title='Comparação de Alinhamento Político',
+                    icon=':material/Map:'),
+        ]
+    )
 
-if __name__ == "__main__":
-    main_page()
+    # Run the application.
+    pages.run()
