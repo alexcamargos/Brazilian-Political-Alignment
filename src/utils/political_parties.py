@@ -17,8 +17,13 @@
 # ------------------------------------------------------------------------------
 
 
+# Mapping of mergers, acquisitions and name changes made based on the list
+# available on the TSE website.
+# URL: https://www.tse.jus.br/partidos/partidos-registrados-no-tse/registrados-no-tse
+# Data da consulta: 11/11/2024.
+
 # Mapping of brazilians merged parties.
-merged_parties = {
+parties_merged_mapping = {
     'PP': 'PPB',
     'PPR': 'PPB',
     'PRONA': 'PR',
@@ -31,7 +36,7 @@ merged_parties = {
 
 
 # Mapping of brazilians incorporated parties.
-incorporated_parties = {
+parties_incorporated_mapping = {
     'PGT': 'PL',
     'PST': 'PL',
     'PSD': 'PTB',
@@ -44,7 +49,7 @@ incorporated_parties = {
 }
 
 # Mapping of brazilians parties that changed their name.
-parties_that_changed_names = {
+parties_changed_names_mapping = {
     'PSN': 'PHS',
     'PRN': 'PTC',
     'PPB': 'PP',
