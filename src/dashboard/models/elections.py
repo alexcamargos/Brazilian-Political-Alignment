@@ -45,11 +45,35 @@ class Election():
             - DataFrame with only elected mayors.
         """
 
+        # Filter the dataset by the selected position.
         position_df = self.__filter_position()
         elected_position_df = position_df[position_df['DS_SIT_TOT_TURNO'] == 'ELEITO']
-        drop_elected_position_df = elected_position_df.drop_duplicates(subset=['SQ_CANDIDATO'])
 
-        return drop_elected_position_df
+        # Convert the 'Espectro' column to a categorical and ordered type.
+        spectrum_type = pd.CategoricalDtype(categories=['Esquerda', 'Centro', 'Direita'], ordered=True)
+        elected_position_df['Espectro'] = elected_position_df.loc[:, 'Espectro'].astype(spectrum_type)
+
+        # Group the dataset by candidate and aggregate the votes.
+        aggregated_elected_candidates_df = (
+            elected_position_df.groupby('SQ_CANDIDATO')
+            .agg({'SG_UF': 'first',
+                  'SG_UE': 'first',
+                  'NM_UE': 'first',
+                  'CD_MUNICIPIO': 'first',
+                  'NM_MUNICIPIO': 'first',
+                  'SG_PARTIDO': 'first',
+                  'NR_PARTIDO': 'first',
+                  'NM_PARTIDO': 'first',
+                  'NR_CANDIDATO': 'first',
+                  'NM_CANDIDATO': 'first',
+                  'NM_URNA_CANDIDATO': 'first',
+                  'Espectro': 'first',
+                  'Espectro_Detalhado': 'first',
+                  'Posicionamento': 'first',
+                  'QT_VOTOS_NOMINAIS': 'sum'})
+            .reset_index())
+
+        return aggregated_elected_candidates_df
 
     @property
     def filter_data(self) -> pd.DataFrame:
