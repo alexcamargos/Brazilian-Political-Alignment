@@ -23,7 +23,9 @@ import streamlit as st
 
 from src.dashboard.models.elections import Election
 from src.dashboard.utils.data_support import list_all_elections_files, load_election_data
-from src.dashboard.utils.standard_elements import dasboard_footer, dashboard_banner
+from src.dashboard.utils.standard_elements import (dasboard_footer,
+                                                   dashboard_banner,
+                                                   setup_dashboard_configuration)
 
 
 @st.cache_resource
@@ -56,16 +58,9 @@ def create_bar_chart_party_counts(party_counts: pd.DataFrame, year: str) -> go.F
     return fig
 
 
-def setup_dashboard_configuration() -> None:
-    st.set_page_config(page_title='Alinhamento Político Brasileiro',
-                       page_icon=':chart_with_upwards_trend:',
-                       layout='wide',
-                       initial_sidebar_state='auto')
-
-
 def main_page() -> None:
     """Default page of the dashboard."""
-    
+
     # Set the page configuration.
     setup_dashboard_configuration()
 
