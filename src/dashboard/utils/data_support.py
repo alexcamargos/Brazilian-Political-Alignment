@@ -57,7 +57,7 @@ def load_election_data(file_path: str) -> pd.DataFrame:
     return pd.read_parquet(file_path)
 
 
-@st.cache
+@st.cache_data
 def load_shapefile_data(shapefile_path: str) -> pd.DataFrame:
     """Load shapefile data.
 
@@ -67,5 +67,13 @@ def load_shapefile_data(shapefile_path: str) -> pd.DataFrame:
     Returns:
         - DataFrame with the shapefile data.
     """
+    
+    geospatial_municipal_mesh = gpd.read_file(f'{shapefile_path}/BR_Municipios_2022.shp')
+    
+    # For faster rendering, simplify the geometry of the geospatial data.
+    geospatial_municipal_mesh['geometry'] = geospatial_municipal_mesh['geometry'].simplify(tolerance=0.01,
+                                                                                           preserve_topology=True)
+    # Set the municipality name to uppercase.
+    geospatial_municipal_mesh['NM_MUN'] = geospatial_municipal_mesh['NM_MUN'].str.upper()
 
-    return gpd.read_file(shapefile_path)
+    return geospatial_municipal_mesh

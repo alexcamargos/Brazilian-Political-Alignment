@@ -19,6 +19,13 @@
 import streamlit as st
 
 
+def setup_dashboard_configuration() -> None:
+    st.set_page_config(page_title='Alinhamento Político Brasileiro',
+                       page_icon=':chart_with_upwards_trend:',
+                       layout='wide',
+                       initial_sidebar_state='auto')
+
+
 @st.cache_resource
 def dashboard_banner() -> None:
     st.title(
