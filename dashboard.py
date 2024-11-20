@@ -27,7 +27,8 @@ if __name__ == '__main__':
         [
             st.Page(main_page,
                     title='Página Inicial',
-                    icon=':material/home:',),
+                    icon=':material/home:',
+                    default=True),
             st.Page(comparison_political_alignment_page,
                     title='Comparação de Alinhamento Político',
                     icon=':material/map:'),
