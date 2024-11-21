@@ -1,16 +1,19 @@
-### General Python ###
+### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
 
 # Distribution / packaging
 .Python
 build/
+develop-eggs/
 dist/
+eggs/
+.eggs/
+lib/
+lib64/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -22,9 +25,10 @@ MANIFEST
 
 # Unit test / coverage reports
 htmlcov/
-.coverage
-.coverage.*
+.coverage*
 .cache
+nosetests.xml
+coverage.xml
 *.cover
 *.py,cover
 .hypothesis/
@@ -34,7 +38,7 @@ htmlcov/
 *.mo
 *.pot
 
-# Environments
+# Virtual Environments
 .env
 .venv
 env/
@@ -42,59 +46,85 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.venv*
+.env*
 
 # Sphinx documentation
 docs/_build/
 
-# Jupyter Notebooks
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
+# Jupyter Notebook
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/*
 
-# Python debug files
-*.pyc
-*.pyo
-*.pyd
+# pyenv
+.python-version
 
-# Python profiling
-*.pstats
-*.prof
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Encrypted files
+*.key
+
+# Distribution logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
 
 ### IDEs and Editors ###
-# VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# VSCode
+.vscode/
 .history/
 
 # PyCharm
 .idea/
-# Uncomment below if you want to keep your code styles and run configurations
-# !.idea/codeStyles
-# !.idea/runConfigurations
 
-# Vim/Gvim
-[._]*.s[a-v][a-z]
-[._]*.sw[a-p]
-[._]s[a-rt-v][a-z]
-[._]ss[a-gi-z]
-[._]sw[a-p]
+# Vim
+*.swp
+.swp
+.swo
 *.un~
 
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Emacs
+*~
+
 ### Operating Systems ###
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
 # Linux
 *~
-.directory
-.Trash-*
-.nfs*
 
 # Windows
 Thumbs.db
 ehthumbs.db
-$RECYCLE.BIN/
-*.stackdump
 [Dd]esktop.ini
+
+### Logs and Databases ###
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+db.sqlite3
+
+### Miscellaneous ###
+docs/_build/
+*.stackdump
 *.cab
 *.msi
 *.msix
@@ -102,26 +132,8 @@ $RECYCLE.BIN/
 *.msp
 *.lnk
 
-### Miscellaneous ###
-# Logs and databases
-*.log
-*.sql
-*.sqlite
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-Icon?
-ehthumbs.db
-[Tt]humbs.db
-
 # Custom files and directories to ignore
-# Add any additional files and directories you want to ignore in your project.
-
 downloads/
-extractions
-data/
+extractions/
 aggregated/
+data/
